@@ -1,13 +1,13 @@
 FROM tomcat:7
-MAINTAINER Philippe Poumaroux <poum@cpan.org>
+LABEL MAINTAINER="Philippe Poumaroux <poum@cpan.org>"
 
-ENV LIBREPLAN_VERSION 1.4.1
+ENV LIBREPLAN_VERSION=1.4.1
 
-ENV MYSQL_JAR_VERSION 5.1.38
-ENV MYSQL_JAR mysql-connector-java-$MYSQL_JAR_VERSION
-ENV MYSQL_JDBC_URL http://dev.mysql.com/get/Downloads/Connector-J/$MYSQL_JAR.tar.gz
+ENV MYSQL_JAR_VERSION=5.1.38
+ENV MYSQL_JAR=mysql-connector-java-$MYSQL_JAR_VERSION
+ENV MYSQL_JDBC_URL=http://dev.mysql.com/get/Downloads/Connector-J/$MYSQL_JAR.tar.gz
 
-ENV LIBREPLAN_MYSQL_WAR_URL http://downloads.sourceforge.net/project/libreplan/LibrePlan/libreplan_mysql_$LIBREPLAN_VERSION.war 
+ENV LIBREPLAN_MYSQL_WAR_URL=http://downloads.sourceforge.net/project/libreplan/LibrePlan/libreplan_mysql_$LIBREPLAN_VERSION.war
 
 RUN curl -SL $MYSQL_JDBC_URL \
     | tar -xzC $CATALINA_HOME/lib/ $MYSQL_JAR/$MYSQL_JAR-bin.jar \
@@ -19,7 +19,7 @@ COPY assets/catalina.policy $CATALINA_HOME/conf/
 COPY assets/setenv.sh $CATALINA_HOME/bin/
 ADD $LIBREPLAN_MYSQL_WAR_URL $CATALINA_HOME/webapps/libreplan.war
 
-RUN apt-get update && apt-get install -y \
+RUN sed -i -E 's/deb\.|security\./archive./g' /etc/apt/sources.list && \
+    apt-get update && apt-get install -y \
     cutycapt \
     xvfb
-
